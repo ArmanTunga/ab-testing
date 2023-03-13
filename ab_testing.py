@@ -90,7 +90,7 @@ Sum of Purchase in df1 is less
 Sum of Earning in df1 is less
 """
 #   3. After analyse process, merge control and test group using concat method
-df = pd.concat([df_control.add_suffix('_Control'), df_test.add_suffix('_Test')])
+df = pd.concat([df_control.add_suffix('_Control'), df_test.add_suffix('_Test')], axis=1)
 df.head()
 df
 df.shape  # 80, 4 as expected
@@ -127,13 +127,13 @@ df[["Purchase_Control", "Purchase_Test"]].mean()
 # If Normality is not valid then go to Non-parametric Test
 
 # PURCHASE CONTROL - Maximum Bidding
-test_stat, p_value = shapiro(df["Purchase_Control"].dropna())
+test_stat, p_value = shapiro(df["Purchase_Control"])
 print("Test Stat = %.4f, p-value = %.4f" % (test_stat, p_value))
 # Test Stat = 0.9773, p-value = 0.5891
 # p-value > 0.05, H0 cannot be rejected. -> Purchase_Control is Normally distributed
 # ------------------------------------------
 # PURCHASE TEST - Average Bidding
-test_stat, p_value = shapiro(df["Purchase_Test"].dropna())
+test_stat, p_value = shapiro(df["Purchase_Test"])
 print("Test Stat = %.4f, p-value = %.4f" % (test_stat, p_value))
 # Test Stat = 0.9589, p-value = 0.1541
 # p-value > 0.05, H0 cannot be rejected. -> Purchase_Test is Normally distributed
@@ -145,7 +145,7 @@ print("Test Stat = %.4f, p-value = %.4f" % (test_stat, p_value))
 """
 # H0: Variances are homogeneous
 # H1: Variances are NOT homogeneous
-test_stat, p_value = levene(df["Purchase_Control"].dropna(), df["Purchase_Test"].dropna())
+test_stat, p_value = levene(df["Purchase_Control"], df["Purchase_Test"])
 print("Test Stat = %.4f, p-value = %.4f" % (test_stat, p_value))
 # Test Stat = 2.6393, p-value = 0.1083
 # p-value > 0.05, H0 cannot be rejected. -> Variances are homogeneous
@@ -155,8 +155,8 @@ print("Test Stat = %.4f, p-value = %.4f" % (test_stat, p_value))
 All the assumptions are valid. So we'll go with the parametric test
 """
 test_stat, p_value = ttest_ind(
-    df["Purchase_Control"].dropna(),
-    df["Purchase_Test"].dropna(),
+    df["Purchase_Control"],
+    df["Purchase_Test"],
     equal_var=True  # Variance homogeneity is valid, equal_var=True
 )
 print("Test Stat = %.4f, p-value = %.4f" % (test_stat, p_value))
